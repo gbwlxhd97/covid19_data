@@ -1,32 +1,59 @@
 import CMChart from '@src/components/CMChart';
 import CMSelect from '@src/components/CMSelect';
-import { IgenAgeCaseInf, IgenAgeCaseResponse, IinfState } from '@src/interfaces/covid19';
+import {
+  IgenAgeCaseInf,
+  IgenAgeCaseResponse,
+  IinfState,
+} from '@src/interfaces/covid19';
 import covid19ApiList from '@src/services/covid19';
 import { dateFormat } from '@src/utils/date';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 export default function Home() {
-  const { getInfState,getGenAge } = covid19ApiList;
+  const { getInfState, getGenAge } = covid19ApiList;
   const [infData, setInfData] = useState<IinfState>();
   const [genderData, setGenderData] = useState<any>({});
-  const [selectDate,setSelectDate] = useState(20211101);
+  const [selectDate, setSelectDate] = useState(20211101);
+  const [ageData, setAgeData] = useState<Array<Array<any>>>();
+  const [ageGubunSum, setAgeGubunSum] = useState<Array<any>>([]);
 
   const initFetch = async () => {
     const infData = await getInfState();
     setInfData(infData);
     const res: IgenAgeCaseInf = await getGenAge();
-    const genderDataList:Array<IgenAgeCaseResponse> =[...res?.items.item
-      .filter((gender) => gender.gubun === '남성' || gender.gubun === '여성')
-      .reverse()
+    const genderDataList: Array<IgenAgeCaseResponse> = [
+      ...res?.items.item
+        .filter((gender) => gender.gubun === '남성' || gender.gubun === '여성')
+        .reverse(),
     ];
-    let obj:any = {}
+    let obj: any = {};
     genderDataList.forEach((item) => {
       obj[item.stateDt] = genderDataList
-      .filter((e) => e.stateDt === item.stateDt)
-      .map((item) => Number(item.confCase));
-    })
-      setGenderData(obj);
+        .filter((e) => e.stateDt === item.stateDt)
+        .map((item) => Number(item.confCase));
+    });
+    setGenderData(obj);
+    const ageDataList = [
+      ...res.items.item.filter(
+        (age) => age.gubun !== '남성' && age.gubun !== '여성'
+      ),
+    ];
+    console.log(ageDataList);
+    const duplicateKeyList = Array.from(
+      new Set(ageDataList.map((e) => e.stateDt))
+    );
+    const sameDateList = duplicateKeyList.map((item) =>
+      ageDataList.filter((e) => e.stateDt === item)
+    );
+    const sum = ageDataList.map((item) =>
+      ageDataList.filter((e) => e.gubun === item.gubun).map((e) => e.confCase)
+    );
+    setAgeData(sameDateList);
+    console.log(sameDateList);
+    console.log('-----');
+    console.log(sum);
+    setAgeGubunSum(sum);
   };
 
   const infSeries: Array<any> = [
@@ -59,14 +86,43 @@ export default function Home() {
   };
   const genderSeries: Array<any> = genderData?.[selectDate];
 
+  const ageOptions = {
+    chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+      zoom: {
+        enabled: false,
+      },
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
+    xaxis: {
+      categories: Object.keys(genderData)
+        .map((date) => dateFormat(date))
+        .reverse(),
+    },
+  };
+  const ageSeries: any = ageData?.map((item, i) => {
+    let name = ageData[i][i].gubun;
+    let data = ageGubunSum[i];
+    return { name, data };
+  });
+
   useEffect(() => {
     initFetch();
   }, []);
 
-  if (genderSeries) 
+  if (genderSeries)
     return (
       <>
-        <Title>코로나 일자별 확진자 수ss</Title>
+        <Title>코로나 일자별 확진자 수</Title>
         <Line />
         <CMChart
           size={{ width: 850, height: 350 }}
@@ -77,6 +133,12 @@ export default function Home() {
         <Flex>
           <Line isGenAgeTitle={true}>
             <Title isGenAgeTitle={true}>일자별 연령대 확진자 수</Title>
+            <CMChart
+              size={{ width: 860, height: 250 }}
+              type={'bar'}
+              series={ageSeries}
+              options={ageOptions}
+            />
           </Line>
           <Line isGenAgeTitle={true}>
             <Title isGenAgeTitle={true}>일자별 성별 확진자 수</Title>
@@ -103,19 +165,20 @@ const Flex = styled.div`
   display: flex;
 `;
 
-const Title = styled.h3<{isGenAgeTitle?:boolean}>`
+const Title = styled.h3<{ isGenAgeTitle?: boolean }>`
   color: #4a4a4a;
   font-size: 14px;
   font-weight: 700;
   margin: 14px 0 10px 12px;
-  border-bottom: ${({isGenAgeTitle}) => isGenAgeTitle ? '1px solid rgba(204, 204, 204, 0.5)' : 0};
-  padding-bottom: ${({isGenAgeTitle}) => isGenAgeTitle ? '20px' : 0};
+  border-bottom: ${({ isGenAgeTitle }) =>
+    isGenAgeTitle ? '1px solid rgba(204, 204, 204, 0.5)' : 0};
+  padding-bottom: ${({ isGenAgeTitle }) => (isGenAgeTitle ? '20px' : 0)};
 `;
 
-const Line = styled.div<{isGenAgeTitle?:boolean}>`
+const Line = styled.div<{ isGenAgeTitle?: boolean }>`
   flex: 1;
   border: 1px solid rgba(204, 204, 204, 0.5);
-  margin-right: ${({isGenAgeTitle}) => isGenAgeTitle ? '-1px' : 0};
+  margin-right: ${({ isGenAgeTitle }) => (isGenAgeTitle ? '-1px' : 0)};
   position: relative;
 `;
 
