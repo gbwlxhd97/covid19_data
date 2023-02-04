@@ -61,7 +61,7 @@ const Container = styled.div`
   display: flex;
   padding: 0 50px;
   height: 100vh;
-  padding: 72px 50px 0 33px;
+  padding: 72px 0px 0 33px;
 `;
 
 const SideTab = styled.div`
