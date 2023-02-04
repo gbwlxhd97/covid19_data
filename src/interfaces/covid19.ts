@@ -13,11 +13,11 @@ interface infResponse {
 
 export interface IgenAgeCaseInf {
   items : {
-    item: genAgeCaseResponse
+    item: Array<IgenAgeCaseResponse>
   }
 }
 
-interface genAgeCaseResponse {
+export interface IgenAgeCaseResponse {
   confCase: string;
   gubun: string;
   stateDt: string;
