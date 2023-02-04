@@ -1,5 +1,5 @@
 
-import { layoutList } from '@src/datas/layout';
+import { layoutList } from '@src/model/layout';
 import styled from 'styled-components';
 import DBDLABSvg from '@src/assets/imgs/DBDLABLOGO.svg';
 import dashboard from '@src/assets/imgs/dashboard.svg';
@@ -67,21 +67,21 @@ const Container = styled.div`
 const SideTab = styled.div`
   flex: 1;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
   padding: 32px 0 0 40px;
-`;
+  `;
 
 const Content = styled.div`
   flex:3;
-`;
+  `;
 
 const Nav = styled.nav`
   margin-top: 50px;
-`;
+  `;
 
 const Ol = styled.ol``;
 
 const Li = styled.li`
+  cursor: pointer;
   margin-top: 40px;
 `;
 
