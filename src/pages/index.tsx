@@ -21,9 +21,9 @@ export default function Home() {
   const initFetch = async () => {
     const infData = await getInfState();
     setInfData(infData);
-    const res: IgenAgeCaseInf = await getGenAge();
+    const genAgeRes: IgenAgeCaseInf = await getGenAge();
     const genderDataList: Array<IgenAgeCaseResponse> = [
-      ...res?.items.item
+      ...genAgeRes?.items.item
         .filter((gender) => gender.gubun === '남성' || gender.gubun === '여성')
         .reverse(),
     ];
@@ -35,7 +35,7 @@ export default function Home() {
     });
     setGenderData(obj);
     const ageDataList = [
-      ...res.items.item.filter(
+      ...genAgeRes.items.item.filter(
         (age) => age.gubun !== '남성' && age.gubun !== '여성'
       ),
     ];
@@ -134,7 +134,7 @@ export default function Home() {
           <Line isGenAgeTitle={true}>
             <Title isGenAgeTitle={true}>일자별 연령대 확진자 수</Title>
             <CMChart
-              size={{ width: 860, height: 250 }}
+              size={{ width: 660, height: 250 }}
               type={'bar'}
               series={ageSeries}
               options={ageOptions}

@@ -14,14 +14,18 @@ type Props = {
 const CMSelect = ({ optionDatas, setFunction,selectDate }: Props) => {
   const [isActive, setIsActive] = useState(false);
   const onSelect =  (selectItem: string) => {
-    setIsActive((prev: any) => !prev);
+    onToggle(false);
     setFunction(selectItem);
   };
+  const onToggle = useCallback((value:boolean) => {
+    setIsActive(value)
+  },[])
+
   const selectRef = useRef(null);
-  useOutsideClick(selectRef, () => setIsActive(false));
+  useOutsideClick(selectRef, () => onToggle(false));
   return (
     <SelectContainer ref={selectRef}>
-      <SelectMenu onClick={() => setIsActive((prev) => !prev)}>
+      <SelectMenu onClick={() => onToggle(!isActive)}>
         {dateFormat(selectDate)} <ArrowIcon isActive={isActive} />
       </SelectMenu>
       {isActive && (

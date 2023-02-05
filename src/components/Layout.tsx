@@ -71,7 +71,7 @@ const SideTab = styled.div`
   `;
 
 const Content = styled.div`
-  flex:3;
+  flex:6;
   `;
 
 const Nav = styled.nav`
