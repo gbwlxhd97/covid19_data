@@ -1,13 +1,12 @@
 import ArrowSvg from "@src/assets/imgs/arrow.svg";
 import useOutsideClick from '@src/hooks/useOutsideClick';
 import { dateFormat } from '@src/utils/date';
-
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 type Props = {
   optionDatas: Array<string>;
-  setFunction: any;
+  setFunction: React.Dispatch<React.SetStateAction<any>>;
   selectDate: string;
 };
 

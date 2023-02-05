@@ -5,7 +5,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 type Props = {
   size: {width:number,height:number};
-  options?: any
+  options?: Object;
   type:"line" | "area" | "bar" | "histogram" | "pie" | "donut" | "radialBar" | "scatter" | "bubble" | "heatmap" | "treemap" | "boxPlot" | "candlestick" | "radar" | "polarArea" | "rangeBar";
   series: Array<{name:string,data:Array<any>}>;
 };

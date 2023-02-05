@@ -15,9 +15,10 @@ export default function Home() {
   const [infData, setInfData] = useState<IinfState>();
   const [genderData, setGenderData] = useState<any>({});
   const [selectDate, setSelectDate] = useState(20211101);
-  const [ageData, setAgeData] = useState<Array<Array<any>>>();
-  const [ageGubunSum, setAgeGubunSum] = useState<Array<any>>([]);
-  const [ageGubunDuplicate, setAgeGubunDuplicate] = useState<Array<string>>([])
+  const [ageData, setAgeData] = useState<Array<Array<IgenAgeCaseResponse>>>();
+  const [ageGubunSum, setAgeGubunSum] = useState<Array<Array<string>>>([]);
+  const [ageGubunDuplicate, setAgeGubunDuplicate] = useState<Array<string>>([]);
+
   const initFetch = async () => {
     const infData = await getInfState();
     setInfData(infData);
@@ -116,7 +117,6 @@ export default function Home() {
   useEffect(() => {
     initFetch();
   }, []);
-
   if (genderSeries)
     return (
       <>
