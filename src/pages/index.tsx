@@ -7,7 +7,7 @@ import {
 } from '@src/interfaces/covid19';
 import covid19ApiList from '@src/services/covid19';
 import { dateFormat } from '@src/utils/date';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
   const [selectDate, setSelectDate] = useState(20211101);
   const [ageData, setAgeData] = useState<Array<Array<any>>>();
   const [ageGubunSum, setAgeGubunSum] = useState<Array<any>>([]);
-
+  const [ageGubunDuplicate, setAgeGubunDuplicate] = useState<Array<string>>([])
   const initFetch = async () => {
     const infData = await getInfState();
     setInfData(infData);
@@ -39,20 +39,18 @@ export default function Home() {
         (age) => age.gubun !== '남성' && age.gubun !== '여성'
       ),
     ];
-    console.log(ageDataList);
     const duplicateKeyList = Array.from(
-      new Set(ageDataList.map((e) => e.stateDt))
+      new Set(ageDataList.map((e) => e.gubun))
     );
+    setAgeGubunDuplicate(duplicateKeyList);
     const sameDateList = duplicateKeyList.map((item) =>
-      ageDataList.filter((e) => e.stateDt === item)
-    );
-    const sum = ageDataList.map((item) =>
-      ageDataList.filter((e) => e.gubun === item.gubun).map((e) => e.confCase)
+      ageDataList.filter((e) => e.gubun === item)
     );
     setAgeData(sameDateList);
-    console.log(sameDateList);
-    console.log('-----');
-    console.log(sum);
+    const sum = ageDataList.map((item) =>
+    ageDataList.filter((e) => e.gubun === item.gubun).map((e) => e.confCase)
+    );
+    
     setAgeGubunSum(sum);
   };
 
@@ -109,12 +107,12 @@ export default function Home() {
         .reverse(),
     },
   };
+
   const ageSeries: any = ageData?.map((item, i) => {
-    let name = ageData[i][i].gubun;
+    let name = ageGubunDuplicate[i];
     let data = ageGubunSum[i];
     return { name, data };
   });
-
   useEffect(() => {
     initFetch();
   }, []);
